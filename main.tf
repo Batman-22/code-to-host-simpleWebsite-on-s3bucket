@@ -54,7 +54,7 @@ resource "aws_s3_object" "styles" {
     content_type = "text/css"
 }
 
-
+# to get website url on console
 output "name" {
     value = aws_s3_bucket_website_configuration.config.website_endpoint
 }
