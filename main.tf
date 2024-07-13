@@ -2,7 +2,7 @@ resource "aws_s3_bucket" "newbucket" {
     bucket = "saitama122"
 }
 
-
+# to unblock public access
 resource "aws_s3_bucket_public_access_block" "policychange" {
   bucket = aws_s3_bucket.newbucket.id
 
@@ -12,24 +12,26 @@ resource "aws_s3_bucket_public_access_block" "policychange" {
   restrict_public_buckets = false
 }
 
-  resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
-  bucket = aws_s3_bucket.newbucket.id
-  policy = jsonencode(
+# to add read access to website content
+resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
+bucket = aws_s3_bucket.newbucket.id
+policy = jsonencode(
+{
+Version = "2012-10-17",
+Statement = [
     {
-    Version = "2012-10-17",
-    Statement = [
-        {
-            Sid = "PublicReadGetObject",
-            Effect = "Allow",
-            Principal = "*",
-            Action = "s3:GetObject",
-            Resource = "arn:aws:s3:::${aws_s3_bucket.newbucket.id}/*",
-        }
-    ]
-  }
-  )
+        Sid = "PublicReadGetObject",
+        Effect = "Allow",
+        Principal = "*",
+        Action = "s3:GetObject",
+        Resource = "arn:aws:s3:::${aws_s3_bucket.newbucket.id}/*",
+    }
+]
+}
+)
 }
 
+# adding endpoint
 resource "aws_s3_bucket_website_configuration" "config" {
   bucket = aws_s3_bucket.newbucket.id
 
